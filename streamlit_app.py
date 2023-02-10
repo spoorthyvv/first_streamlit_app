@@ -10,15 +10,14 @@ streamlit.text('🥣🥣🥣 Omega 3 & Blueberry Oatmeal')
 streamlit.text(' 🥗 🥗 🥗 Kale, Spinach & Rocket Smoothie')
 streamlit.text('🐔 🐔 🐔 Hard-Boiled Free-Range Egg')
 streamlit.text('🥑🍞 Avocardo shit')
+
 streamlit.header('🍌🥭 Build Your Own Fruit Smoothie 🥝🍇')
 
 my_fruit_list = pandas.read_csv("https://uni-lab-files.s3.us-west-2.amazonaws.com/dabw/fruit_macros.txt")
 my_fruit_list = my_fruit_list.set_index('Fruit')
 # Let's put a pick list here so they can pick the fruit they want to include 
-
 fruits_selected = streamlit.multiselect("Pick some fruits:", list(my_fruit_list.index))
 fruits_to_show = my_fruit_list.loc[fruits_selected]
-
 #fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
 # Display the table on the page.
 streamlit.dataframe(fruits_to_show)
@@ -43,23 +42,9 @@ try:
 except URLError as e:
   streamlit.error()
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # ---changed-----------------------------------------------------------------------------------------------------------------------------
-streamlit.header("The fruit load list contains:")
+streamlit.header("View our fruit list add ure fav")
 #snowflake related functions 
 def get_fruit_load_list():
     with my_cnx.cursor() as my_cur:
@@ -71,6 +56,7 @@ def get_fruit_load_list():
 if streamlit.button('Get fruit load list'):
     my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
     my_data_rows = get_fruit_load_list()
+    my_cnx.close()
     streamlit.dataframe(my_data_rows)
     
 # ---changed-----------------------------------------------------------------------------------------------------------------------------
@@ -82,35 +68,19 @@ if streamlit.button('Get fruit load list'):
 
 # ---changed-----------------------------------------------------------------------------------------------------------------------------
 
-streamlit.write('The user entered ', add_my_fruit)
-
-
-
-
-
-
-
-
-
-
-
-
 def insert_row_snowflake(new_fruit):
     with my_cnx.cursor() as my_cur:
-        my_cur.execute("INSERT INTO FRUIT_LOAD_LIST VALUES ('from streamlit')")
-        return "Thanks for adding " + new_fruit
+        my_cur.execute("INSERT INTO FRUIT_LOAD_LIST VALUES ('"+ new_fruit +"')")
+        return "Thanks for adding " + add_my_fruit
     
-add_my_fruit = streamlit.text_input('What fruit would you like to add')
+add_my_fruit = streamlit.text_input('What fruit would you like to add ?','apple')
 if streamlit.button('Add a Fruit to the List'):
     my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
     back_from_function = insert_row_snowflake(add_my_fruit)
+    my_cnx.close()
     streamlit.text(back_from_function)
     
     
-    
-
-
-streamlit.stop()
-
+   
     
     
